@@ -1,0 +1,31 @@
+body{   
+ background-color: #FFFFFF;
+ color: #000000;
+ font-size: 12px;
+ font-family: FreeMono;
+ margin: 0px;
+ padding: 0px;
+ 
+}
+
+.div_style {
+background-color: #e3e3e3;
+width: 100%;
+position:absolute; 
+top:0px;
+border-bottom: 1px solid #282828;
+}
+
+/* SPAN not DIV ;) */
+span.div_style a:visited, a:link {color: black}
+span.div_style a:hover {color: blue}
+
+a:link, a:visited{
+color: blue;
+text-decoration: none;
+}
+a:hover, a:focus, a:active{
+color: black;
+text-decoration: none;
+}
+

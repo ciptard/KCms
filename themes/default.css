@@ -1,0 +1,48 @@
+body {
+color: #FFFFFF;
+background-color: black;
+font-family: Courier New, Verdana, Arial;
+font-size: 13px;
+cursor: crosshair;
+}
+
+a:link {
+color: #FFFFFF;
+text-decoration: none;
+}
+
+a:visited {
+color: #FFFFFF;
+text-decoration: none;
+}
+
+a:hover {
+cursor: crosshair;
+text-decoration: none;
+color: #808080;
+}
+
+a.head {
+text-decoration: none;
+text-color: #FF0000;
+}
+
+a.head:hover {
+cursor: crosshair;
+text-decoration: none;
+color: #FF0000;
+}
+
+input:hover, textarea:hover {
+background: #808080;
+cursor: crosshair;
+}
+
+.div_style {
+	padding-left: 3pt;
+	padding-right: 3pt;
+    font-size: 9pt;
+    border: solid #FFFFFF 1pt;
+    background-color: #000000;
+}
+
