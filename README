@@ -1,0 +1,12 @@
+KCms is an highly configurable, totally OOP and theme based cms.
+
+For install it, upload the files in your web space, and go to install.php.
+
+Now you can log in going to login.php file.
+
+Next you'll redirect to admin.php, here you can modify, delete and add new page.
+
+
+For add a new theme you'll put the css file in /themes directory and change your "$theme" variable in settings.php to your css name without the extension.
+
+Enjoy it!
