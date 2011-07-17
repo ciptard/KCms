@@ -1,0 +1,41 @@
+body {   
+ background-color: black;
+ color: white;
+ font-size: 12px;
+ font-family: Courier New, Monospace;
+}
+
+.menu {
+ color: red; 
+ font-size: 14px;
+ /*position: absolute;*/
+ border-bottom: 1px solid #282828;
+ height: 15px;
+ top: 9px;
+}
+
+.nnews {
+border-bottom: 1px solid red;
+border-left: 1px solid red;
+border-right: 1px solid red;
+border-top: 1px solid red;
+width: 300;
+/*height: 300;*/
+right: 0px;
+position: absolute;
+}
+
+/* SPAN not DIV ;) */
+span.menu a:visited, a:link {color: red}
+span.menu a:hover {color: white}
+
+a:link, a:visited {
+color: red;
+text-decoration: none;
+}
+
+a:hover, a:focus, a:active {
+color: white;
+text-decoration: none;
+}
+

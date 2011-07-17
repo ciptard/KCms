@@ -20,47 +20,49 @@ function change_divst(id)
 
 </script>
 <?php
-
-function br2nl($string) {
-	return str_replace("<br />", "", $string);
-} 
-set_magic_quotes_runtime(false);
+error_reporting(E_ALL);
+include "settings.php";
 include "class.Main.php";
 include "settings.php";
-echo "<link rel=\"stylesheet\" href=\"themes/{$theme}.css\" type=\"text/css\">\n";
+include "themes/{$theme}/settings.php";
+include "ckeditor/ckeditor.php";
+
+
 $kcms = new KCms;
+$kcms->MyConnect();
+$names = $kcms->getNames();
+
+echo "<link rel=\"stylesheet\" href=\"themes/{$theme}/{$css}\" type=\"text/css\">\n";
 @session_start();
 if (isset($_SESSION['is_logged']) && $_SESSION['is_logged'] === true) {
 	echo "<center><a style=\"cursor: pointer;\" onClick=\"change_divst('id1')\">Write</a></center>";
 	echo "<div id=\"id1\" style=\"display: none;\">\n";
 	echo "<form method=\"POST\">\n";
 	echo "<input type=\"hidden\" name=\"write\">";
-	echo "<input type=\"hidden\" value=\"".htmlspecialchars($_COOKIE['PHPSESSID'])."\" name=\"sid\">";
+	echo "<input type=\"hidden\" value=\"".htmlspecialchars(session_id())."\" name=\"sid\">";
 	echo "<label>Title: </label><input type=\"text\" name=\"title\"><br />\n";
 	echo "<label>Content: </label><br />\n";
-	echo "<textarea cols=121 rows=15 name=\"content\"></textarea><br />\n";
+	$CKEditor = new CKEditor();
+	$out_write = $CKEditor->editor("content");
+	$out_write = str_replace('<textarea name="content" rows="8" cols="60"></textarea>', "", $out_write);
+	echo "<textarea cols=60 rows=8 name=\"content\"></textarea><br />\n";
 	echo "<input type=\"submit\" value=\"Add\">";
 	echo "</form>";
 	echo "</div>";
 	
 	echo "<center><a style=\"cursor: pointer;\" onClick=\"change_divst('id2')\">Delete</a></center>";
 	echo "<div id=\"id2\" style=\"display: none;\">\n";
-	echo "<form method=\"POST\">\n";
-	echo "<input type=\"hidden\" name=\"delete\">";
-	echo "<input type=\"hidden\" value=\"".htmlspecialchars($_COOKIE['PHPSESSID'])."\" name=\"sid\">";
-	echo "<label>Title: </label><input type=\"text\" name=\"title\"><br />\n";
-	echo "<input type=\"submit\" value=\"Delete\">";
-	echo "</form>";
+	$sid = htmlspecialchars(session_id());
+	foreach (array_keys($names) as $id) {
+		echo "<a href=\"admin.php?id=".$id."&sid=".$sid."&delete\">".$names[$id]."</a> ";
+	}
 	echo "</div>";
 	
 	echo "<center><a style=\"cursor: pointer;\" onClick=\"change_divst('id3')\">Edit</a></center>";
 	echo "<div id=\"id3\" style=\"display: none;\">\n";
-	echo "<form method=\"POST\">\n";
-	echo "<input type=\"hidden\" name=\"edit\">";
-	echo "<input type=\"hidden\" value=\"".htmlspecialchars($_COOKIE['PHPSESSID'])."\" name=\"sid\">";
-	echo "<label>Title: </label><input type=\"text\" name=\"title\"><br />\n";
-	echo "<input type=\"submit\" value=\"Edit\">";
-	echo "</form>";
+	foreach (array_keys($names) as $id) {
+		echo "<a href=\"admin.php?id=".$id."&sid=".$sid."&edit\">".$names[$id]."</a> ";
+	}
 	echo "</div>";
 }
 
@@ -68,52 +70,75 @@ if (isset($_POST['write'])) {
 	if (!isset($_POST['content']) || !isset($_POST['title']) || !isset($_POST['sid'])) {
 		die("You must complete all fields (or you aren't logged)");
 	}
-	if ($_POST['sid'] != $_COOKIE['PHPSESSID'] || !isset($_SESSION['is_logged']) || $_SESSION['is_logged'] === false ) {
+	
+	if ($_REQUEST['sid'] != session_id() || !isset($_SESSION['is_logged']) || $_SESSION['is_logged'] === false ) {
 		die("Are you trying to hacking KCms?");
 	}
 	
-	$kcms->WritePage($_POST['content'], $_POST['title']);
+	$kcms->WritePage($_REQUEST['content'], $_POST['title']);
 }
 
-if (isset($_POST['delete'])) {
-	if (!isset($_POST['title']) || !isset($_POST['sid'])) {
+if (isset($_REQUEST['delete'])) {
+	if (!isset($_REQUEST['id']) || !isset($_REQUEST['sid'])) {
 		die("You must complete all fields (or you aren't logged)");
 	}
-	if ($_POST['sid'] != $_COOKIE['PHPSESSID'] || !isset($_SESSION['is_logged']) || $_SESSION['is_logged'] === false ) {
+	if ($_REQUEST['sid'] != session_id() || !isset($_SESSION['is_logged']) || $_SESSION['is_logged'] === false ) {
 		die("Are you trying to hacking KCms?");
 	}
 	
-	$kcms->DeletePage($_POST['title']);
+	$kcms->DeletePage($_REQUEST['id']);
 }
 
-if (isset($_POST['edit'])) {
-	if (!isset($_POST['title']) || !isset($_POST['sid'])) {
-		die("You must complete all fields (or you aren't logged)");
-	}
-	if ($_POST['sid'] != $_COOKIE['PHPSESSID'] || !isset($_SESSION['is_logged']) || $_SESSION['is_logged'] === false ) {
-		die("Are you trying to hacking KCms?");
-	}
-	echo "<form method=\"POST\">\n";
-	echo "<label>New content: </label><br />\n";
-	echo "<textarea cols=121 rows=15 name=\"new_content\">";
-	echo htmlspecialchars(br2nl($kcms->ReadPageEdit($_POST['title'])), ENT_NOQUOTES);
-	echo "</textarea><br />\n";
-	echo "<input type=\"hidden\" name=\"sid\" value=\"".htmlspecialchars($_COOKIE['PHPSESSID'])."\">\n";
-	echo "<input type=\"hidden\" name=\"title\" value=\"".htmlspecialchars($_POST['title'])."\">\n";
-	echo "<input type=\"hidden\" name=\"edit_content\">\n";
-	echo "<input type=\"submit\" value=\"Edit\">";
-}
 	
-if (isset($_POST['edit_content'])) {
-	if (!isset($_POST['title']) || !isset($_POST['sid']) || !isset($_POST['new_content'])) {
-		die("You must complete all fields (or you aren't logged)");
+if (isset($_REQUEST['edit'])) {
+	if (isset($_REQUEST['id']) && isset($_REQUEST['sid']) && $_REQUEST['sid'] == session_id() && isset($_REQUEST['edit']) && !isset($_REQUEST['newtitle']) && !isset($_REQUEST['edit_content'])) {
+		$cont = $kcms->ReadPage($_REQUEST['id']);
+		echo "\n<form method=\"POST\" action=\"admin.php?edit\">\n";
+		echo "<label>New Title: </label><input type=\"text\" name=\"new_title\" value=\"{$cont[1]}\"><br />";
+		echo "<label>New Content: </label><br />\n";
+		$CKEditor = new CKEditor();
+		$out_edit = $CKEditor->editor("edit_content", $cont[0]);
+		$out_edit = preg_replace('/<textarea name="edit_content" rows="8" cols="60">.*?<\/textarea>/s', "", $out_edit);
+		echo "<textarea cols=121 rows=15 name=\"edit_content\">{$cont[0]}";
+		echo "</textarea><br />\n";
+		echo "<input type=\"hidden\" name=\"sid\" value=\"".session_id()."\">\n";
+		echo "<input type=\"hidden\" name=\"id\" value=\"".htmlentities($_REQUEST['id'])."\">\n";
+		echo "<input type=\"hidden\" name=\"edit\">\n";
+		echo "<input type=\"submit\" value=\"Edit\">\n";
+		echo "</form>";
 	}
+	
 
-	if ($_POST['sid'] != $_COOKIE['PHPSESSID'] || !isset($_SESSION['is_logged']) || $_SESSION['is_logged'] === false ) {
+	if ($_REQUEST['sid'] != session_id() || !isset($_SESSION['is_logged']) || $_SESSION['is_logged'] === false ) {
 		die("Are you trying to hacking KCms?");
 	}
 	
-	$kcms->WritePage(htmlspecialchars_decode($_POST['new_content']), htmlspecialchars_decode($_POST['title']));
+	if (isset($_REQUEST['id']) && isset($_REQUEST['sid']) && $_REQUEST['sid'] == session_id() && isset($_REQUEST['edit']) && isset($_REQUEST['new_title']) && isset($_REQUEST['edit_content'])) {
+		$kcms->PageEdit($_REQUEST['id'],  $_REQUEST['edit_content'], $_REQUEST['new_title']);
+	}
+	
+}
+/*
+		echo "<form method=\"POST\">\n";
+		echo "<label>New content: </label><br />\n";
+		echo "<textarea cols=121 rows=15 name=\"new_cjs\">";
+		echo htmlspecialchars(br2nl($cont[0], ENT_NOQUOTES));
+		echo "</textarea><br />\n";
+		echo "<label>New Javascript: </label><br />\n";
+		echo "<textarea cols=121 rows=15 name=\"new_content\">";
+		echo htmlspecialchars(br2nl($cont[1], ENT_NOQUOTES));
+		echo "</textarea><br />\n";
+		echo "<input type=\"hidden\" name=\"sid\" value=\"".session_id()."\">\n";
+		echo "<input type=\"hidden\" name=\"title\" value=\"".htmlspecialchars($_REQUEST['title'])."\">\n";
+		echo "<input type=\"hidden\" name=\"edit_content\">\n";
+		echo "<input type=\"submit\" value=\"Edit\">";
+*/
+
+if (isset($out_write)) {
+	echo $out_write;
 }
 
+if (isset($out_edit)) {
+	echo $out_edit;
+}
 ?>

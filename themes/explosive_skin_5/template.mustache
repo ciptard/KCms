@@ -1,0 +1,25 @@
+<html> 
+<head> 
+<title>{{{title}}}</title> 
+<link rel="stylesheet" type="text/css" href="themes/explosive_skin_5/default.css"> 
+</head> 
+<body> 
+<div id="containercenter">
+<div id="container">
+{{#oth}}
+<h1>{{{title}}}</h1>
+{{/oth}}
+<div id="menu1">
+<ul>
+	{{#menu}}
+    <li{{#selected}} class="this"{{/selected}}><a href="{{{link}}}">{{{index}}}</a></li>
+    {{/menu}}
+</ul>
+</div>
+<div id="containera">
+{{{content}}}
+</div>
+</div> 
+</div>
+</body> 
+</html>

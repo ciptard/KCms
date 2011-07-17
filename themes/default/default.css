@@ -1,0 +1,57 @@
+body {
+color: black;
+background-color: white;
+font-family: Courier New, Verdana, Arial;
+font-size: 13px;
+}
+
+a:link {
+color: gray;
+text-decoration: none;
+}
+
+a:visited {
+color: gray;
+text-decoration: none;
+}
+
+a:hover {
+text-decoration: none;
+color: black;
+}
+
+a.head {
+text-decoration: none;
+text-color: #FF0000;
+}
+
+a.head:hover {
+text-decoration: none;
+color: #FF0000;
+}
+
+.menu {
+	left: 0px;
+    font-size: 9pt;
+    border-right: solid black 1pt;
+    padding-right: 10px;
+    padding-left: 17px;
+    height: 95%;
+    position: absolute;
+    /*list-style-type: square;*/
+}
+
+.content {
+	right: 50%;
+	position: absolute;
+}
+
+.selected {
+	padding-left: 20px;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0px;
+	right: 50%;
+}

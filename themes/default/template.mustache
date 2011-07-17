@@ -1,0 +1,12 @@
+<link rel=stylesheet href="themes/default/default.css">
+
+<div class="menu">
+<ul>{{#menu}}
+{{^selected}}<li>{{/selected}}{{#selected}}<li class="selected">{{/selected}}<a href="{{{link}}}">{{{index}}}</a></li>
+{{/menu}}</ul></div><br /><br />
+<div class="content">
+{{{content}}}
+</div>
+<div class="footer">
+Powered by <a href="http://kcms.zxq.net">KCms</a>
+</div>

@@ -1,65 +1,129 @@
 <?php
 include "settings.php";
+include "class.Template.php";
+
 class KCms {
-	private function Secure_Title($string) { // "." and "/" are transformed in _ and blank for a security reason
-		return str_replace(".", "_", str_replace("/", "", $string));
+	var $preamble;
+	var $post;
+	
+	public function MyConnect() {
+		global $host, $my_user, $my_pass, $database;
+		mysql_connect($host, $my_user, $my_pass);
+		mysql_select_db($database);
 	}
+	
+	
+	private function strip_slashes($string) {
+		if (get_magic_quotes_gpc()) {
+			return stripslashes($string);
+		} else {
+			return $string;
+		}
+	}
+	
+	public function getNames() {
+		$names = array();
+		$ids = array();
+		$res = mysql_query("SELECT title, id FROM kcms") or die(mysql_error());
+		
+		while ($r = mysql_fetch_array($res)) {
+			array_push($names, $r["title"]);
+			array_push($ids, $r["id"]);
+		}
+		
+		return array_combine($ids, $names);
+	}
+	
+	public function getLastId() {
+		$lastid = null;
+		$res = mysql_query("SELECT id FROM kcms") or die(mysql_error());
+		
+		while ($r = mysql_fetch_array($res)) {
+			$lastid = $r["id"];
+		}
+		
+		mysql_free_result($res);
+		
+		return $lastid;
+	}
+		
+	public function ReadPage($id) {
+		$id = intval($id);
+		$res = mysql_query("SELECT * FROM kcms WHERE id={$id}") or die(mysql_error());
+		$r = mysql_fetch_array($res);
+		return array($r["content"], $r["title"]);
+	}
+	
 	
 	public function WritePage($content, $title) {
-		global $pages_path;
-		$fd = fopen($pages_path."/".$this->Secure_Title($title), "w"); 
-		fwrite($fd, nl2br($content)); // No htmlspecialchars, no strip/addslashes, if you are admin and you want to write your own HTML or JS/AJAX in your page, you can do it
-		fclose($fd);
-	}
-	
-	public function ReadPage($title) {
-		global $pages_path;
-		$fd = fopen($pages_path."/".$this->Secure_Title($title), "r"); // This transformation is a very high security tip, but if you don't want to receive an XSS attack, you don't have to set $page_path to /
-		$read = fread($fd, filesize($pages_path."/".$this->Secure_Title($title)));
-		$read .= "<br /><br /><br /><div id=\"footer\">Powered by <a href=\"http://hack2web.altervista.org\">KCms</a></div>";
-		return $read;
-	}
-	
-	public function ReadPageEdit($title) {
-		global $pages_path;
-		$fd = fopen($pages_path."/".$this->Secure_Title($title), "r"); // This transformation is a very high security tip, but if you don't want to receive an XSS attack, you don't have to set $page_path to /
-		$read = fread($fd, filesize($pages_path."/".$this->Secure_Title($title)));
-		return $read;
-	}
-	
-	public function DeletePage($title) {
-		global $pages_path;
-		unlink($pages_path."/".$this->Secure_Title($title)); 
-	}
-	
-	public function CreateMenu() {
-		global $pages_path, $index_page, $theme;
-		$pages = array();
-		$dir = opendir($pages_path);
-		while (false !== ($file = readdir($dir))) {
-			if ($file != "." && $file != "..") {
-				array_push($pages, $file);
-			}
+		if ($title == "") {
+			return -1;
 		}
 		
-		echo "<link rel=\"stylesheet\" href=\"themes/{$theme}.css\" type=\"text/css\">\n";
-		if (isset($logo)) {
-			echo "<center><img src=\"{$logo}\" /></center><br /><br />";
-		}
+		mysql_query("INSERT INTO kcms VALUES ('', '".mysql_real_escape_string($title)."', '".mysql_real_escape_string($content)."')") or die(mysql_error());
 		
-		echo "<span class=\"div_style\">\n";
-		$n = 0;
-		foreach($pages as $page) {
-			$n++;
-			if ($n == count($pages)) { 
-				echo "<a href=\"read.php?page=".htmlspecialchars($page)."\" >".htmlspecialchars($page)."</a>";
+	}
+	
+	public function getNamefromId($id) {
+		$id = intval($id);
+		$res = mysql_query("SELECT title FROM kcms WHERE id={$id}") or die(mysql_error());
+		$r = mysql_fetch_row($res);
+		return $r[0];
+	}
+		
+	
+	public function PageEdit($id, $content, $newtitle = null) {
+		$id = intval($id);
+		if ($newtitle == null) {
+			mysql_query("UPDATE kcms SET content='".mysql_real_escape_string($content)."' WHERE id={$id}") or die(mysql_error());
+		} else {
+			mysql_query("UPDATE kcms SET content='".mysql_real_escape_string($content)."', title='".mysql_real_escape_string($newtitle)."' WHERE id={$id}") or die(mysql_error());
+		}
+	}
+	
+	public function DeletePage($id) {
+		$id = intval($id);
+		mysql_query("DELETE FROM kcms WHERE id={$id}") or die(mysql_error());
+	}
+	
+	private function findAll($r, $s) {
+		$ret = array();
+		preg_match_all($r, $s, $ret);
+		return $ret;
+	}
+	
+	public function CreateMenu($sel) {
+		$menu = $this->getNames();
+		$mu_menu = array();
+		
+		foreach ($menu as $k => $y) {
+			if ($k == $sel) {
+				array_push($mu_menu, array("index" => $y, "link" => "read.php?id=".$k, "selected" => true));
 			} else {
-				echo "<a href=\"read.php?page=".htmlspecialchars($page)."\" >".htmlspecialchars($page)."</a> - ";
+				array_push($mu_menu, array("index" => $y, "link" => "read.php?id=".$k));
 			}
 		}
-		echo "</span><br /><br />";
+		
+		return $mu_menu;
 	}
 	
+	public function ParseTemplate($sel, $cont) {
+		global $theme, $oth;
+		$mus = file_get_contents("themes/".$theme."/template.mustache");
+		$info = $this->CreateMenu($sel);
+		
+		$template = new Template;
+		$template->content = $cont;
+		$template->menu = $info;
+		
+		if (isset($oth) and $oth != array()) {
+			$template->oth = $oth;
+		}
+		
+		return $template->render($mus);
+	}
+	
+
 	public function Login($user_login, $pass_login) {
 		global $user, $pass;
 		
@@ -76,6 +140,52 @@ class KCms {
 	
 	public function Logout() {
 		session_destroy();
-	}		
+	}
+	
+	public function LoadPlugins($html, $title) {
+		$n = 0;
+		$data = $html;
+		if (!file_exists("plugins/active.txt")) {
+			return $data;
+		}
+		
+		$data1 = file_get_contents("plugins/active.txt");
+		$data1 = str_replace("\n", "", $data1);
+		
+		if ($data1 == "") {
+			return $data;
+		} 
+		
+		$active = file("plugins/active.txt");
+		foreach ($active as $plugin) {
+			$new_data = $html;
+			$plugin = str_replace("\n", "", $plugin);
+			if (!file_exists("plugins/".$plugin)) {
+				die("Plugin: ".$plugin." doesn't exist");
+			}
+			
+			if (!preg_match("/[a-zA-Z0-9]*\.php/", $plugin)) {
+				die("Plugin: ".$plugin." isn't a valid plugin");
+			}
+			
+			require("plugins/{$plugin}");
+			$func = array();
+			$funcs = array(); // maybe, in future, it will have an explaination D:
+			preg_match("/([a-zA-Z0-9]*)\.php/", $plugin, $func);
+			array_push($funcs, $func[1]);
+			$class = new $func[1];
+			$n += 1;
+			$new_data = $class->main($new_data, $title);
+		}
+		return $new_data;
+	}
+	
+	public function Main($id) {
+		$this->MyConnect();
+		$content = $this->ReadPage($id);
+		$html = $this->ParseTemplate($id, $this->LoadPlugins($content[0], $this->getNamefromId($id)));
+		echo $html;
+	}
+				
 }
 ?>

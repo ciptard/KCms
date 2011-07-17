@@ -1,0 +1,143 @@
+/* Css by Evolution (http://explosivelab.altervista.org/), part of Explosive Skin project, license: http://creativecommons.org/licenses/by-sa/2.5/it/ */
+
+body{
+      background-color: #EFEFEF;
+      color: #999;
+      font-size: 12px;
+      font-family: Monospace;
+      margin:0px;
+      padding:0px;
+}
+ 
+#container{
+ border-left: 1px solid #1AC400;
+ float: left;
+ height: 600px;
+ width: 900px;
+ margin-top: 50px;
+ margin-left: 50px;
+}
+ 
+#containertext{
+ margin-top: 50px;
+ margin-left: 50px;
+ float: left;
+ width: 900px;
+ height: 450px;
+}
+ 
+#ctext{
+ float: left;
+ width: 550px;
+ height: 390px;
+ padding: 2px;
+}
+ 
+#ctitle{
+  margin-left: 15px;
+  float: left;
+  padding: 2px;
+  font-size: 30px;
+  color: #999;
+}
+ 
+#ctitle2{  
+  margin-left: 6px;
+  float: left;
+  padding: 2px;
+  font-size: 30px;
+  color: #666;
+}
+#incontainer{
+ float: left;
+ margin-top: 5px;
+ float: left;
+ width: 740px;
+ height: 180px;
+ padding: 2px;
+ 
+}
+ 
+#intitle{ 
+ float: left;
+ padding: 2px;  
+ font-size: 15px;
+ color: #666;
+}
+ 
+#immagine{
+ float: right;
+ height: 130px;
+ width: 130px;
+}
+ 
+#boxinfo{
+ float: left;
+ margin-left: 72px;
+ width: 200px;
+ height: 160px;
+ padding: 2px;
+}
+ 
+#boxinfotab{
+ 
+  padding: 2px;
+  font-size: 20px;
+  color: #666;
+}
+ 
+#boxinfotabb{
+ 
+  padding: 2px;
+  font-size: 20px;
+  color: #666;
+}
+ 
+#boxinfotabb2{
+  float: right;
+  padding: 2px;
+  font-size: 15px;
+  color: #666;
+}
+ 
+ 
+#addv{
+ margin-top: 5px;
+ margin-left: 675px;
+ width: 125px;
+ height: 125px;
+ padding: 0px;
+ 
+}
+#menu{
+ margin-top: 50px;
+ margin-left: 50px;
+ float: left;
+ 
+}
+#menu ul{
+ list-style: none;
+}
+ 
+#menu li{
+ 
+ text-transform: uppercase;
+ margin: 5px;
+ display: block;
+}
+#menu a:link, #menu a:visited{
+text-decoration: none;
+ color: #999;
+}
+#menu a:hover, #menu a:focus, #menu a:active{
+color: #1AC400;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0px;
+	right: 50%;
+}
+
+a:link, a:visited{color: #666;text-decoration: none;}
+
