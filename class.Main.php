@@ -183,7 +183,8 @@ class KCms {
 	public function Main($id) {
 		$this->MyConnect();
 		$content = $this->ReadPage($id);
-		$html = $this->ParseTemplate($id, $this->LoadPlugins($content[0], $this->getNamefromId($id)));
+		$html = $this->ParseTemplate($id, $content[0]);
+		$html = $this->LoadPlugins($html, $this->getNamefromId($id));
 		echo $html;
 	}
 				
