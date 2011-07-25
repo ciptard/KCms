@@ -1,5 +1,5 @@
 KCms stands for Kool CMS.
 
-It uses CKeditor (http://ckeditor.com/, GPL, LGPL and MPL License) and mustache.php (https://github.com/bobthecow/mustache.php, MIT License)
+It uses TinyMCE (http://tinymce.moxiecode.com/, LGPL) and mustache.php (https://github.com/bobthecow/mustache.php, MIT License)
 
 Just visit http://kcms.qc.to for more informations.
