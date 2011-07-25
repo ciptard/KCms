@@ -41,7 +41,7 @@ tinyMCE.init({
         template_external_list_url : "tinymce/jscripts/tiny_mce/template_list.js",
         external_link_list_url : "tinymce/jscripts/tiny_mce/link_list.js",
         external_image_list_url : "tinymce/jscripts/tiny_mce/image_list.js",
-        media_external_list_url : "tinymce/jscripts/tiny_mce/media_list.js",
+        media_external_list_url : "tinymce/jscripts/tiny_mce/media_list.js"
 });
 </script>
 
@@ -118,7 +118,7 @@ if (isset($_REQUEST['edit'])) {
 		echo "\n<form method=\"POST\" action=\"admin.php?edit\">\n";
 		echo "<label>New Title: </label><input type=\"text\" name=\"new_title\" value=\"{$cont[1]}\"><br />";
 		echo "<label>New Content: </label><br />\n";
-		echo "<textarea cols=121 rows=15 name=\"edit_content\">{$cont[0]}";
+		echo "<textarea cols=121 rows=15 name=\"edit_content\">".htmlentities($cont[0]);
 		echo "</textarea><br />\n";
 		echo "<input type=\"hidden\" name=\"sid\" value=\"".session_id()."\">\n";
 		echo "<input type=\"hidden\" name=\"id\" value=\"".htmlentities($_REQUEST['id'])."\">\n";
