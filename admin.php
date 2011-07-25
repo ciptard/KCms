@@ -19,13 +19,38 @@ function change_divst(id)
 
 
 </script>
+<script type="text/javascript" src="tinymce/jscripts/tiny_mce/tiny_mce_dev.js"></script>
+<script type="text/javascript">
+tinyMCE.init({
+        mode : "textareas",
+        theme : "advanced",
+        plugins : "autolink,lists,spellchecker,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
+
+        theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+        theme_advanced_buttons3 : "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+        theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,spellchecker,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,blockquote,pagebreak,|,insertfile,insertimage",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        theme_advanced_statusbar_location : "bottom",
+        theme_advanced_resizing : true,
+
+        skin : "o2k7",
+        skin_variant : "black",
+
+        template_external_list_url : "tinymce/jscripts/tiny_mce/template_list.js",
+        external_link_list_url : "tinymce/jscripts/tiny_mce/link_list.js",
+        external_image_list_url : "tinymce/jscripts/tiny_mce/image_list.js",
+        media_external_list_url : "tinymce/jscripts/tiny_mce/media_list.js",
+});
+</script>
+
 <?php
 error_reporting(E_ALL);
 include "settings.php";
 include "class.Main.php";
 include "settings.php";
 include "themes/{$theme}/settings.php";
-include "ckeditor/ckeditor.php";
 
 
 $kcms = new KCms;
@@ -42,9 +67,6 @@ if (isset($_SESSION['is_logged']) && $_SESSION['is_logged'] === true) {
 	echo "<input type=\"hidden\" value=\"".htmlspecialchars(session_id())."\" name=\"sid\">";
 	echo "<label>Title: </label><input type=\"text\" name=\"title\"><br />\n";
 	echo "<label>Content: </label><br />\n";
-	$CKEditor = new CKEditor();
-	$out_write = $CKEditor->editor("content");
-	$out_write = str_replace('<textarea name="content" rows="8" cols="60"></textarea>', "", $out_write);
 	echo "<textarea cols=60 rows=8 name=\"content\"></textarea><br />\n";
 	echo "<input type=\"submit\" value=\"Add\">";
 	echo "</form>";
@@ -96,9 +118,6 @@ if (isset($_REQUEST['edit'])) {
 		echo "\n<form method=\"POST\" action=\"admin.php?edit\">\n";
 		echo "<label>New Title: </label><input type=\"text\" name=\"new_title\" value=\"{$cont[1]}\"><br />";
 		echo "<label>New Content: </label><br />\n";
-		$CKEditor = new CKEditor();
-		$out_edit = $CKEditor->editor("edit_content", $cont[0]);
-		$out_edit = preg_replace('/<textarea name="edit_content" rows="8" cols="60">.*?<\/textarea>/s', "", $out_edit);
 		echo "<textarea cols=121 rows=15 name=\"edit_content\">{$cont[0]}";
 		echo "</textarea><br />\n";
 		echo "<input type=\"hidden\" name=\"sid\" value=\"".session_id()."\">\n";
