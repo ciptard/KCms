@@ -137,27 +137,4 @@ if (isset($_REQUEST['edit'])) {
 	}
 	
 }
-/*
-		echo "<form method=\"POST\">\n";
-		echo "<label>New content: </label><br />\n";
-		echo "<textarea cols=121 rows=15 name=\"new_cjs\">";
-		echo htmlspecialchars(br2nl($cont[0], ENT_NOQUOTES));
-		echo "</textarea><br />\n";
-		echo "<label>New Javascript: </label><br />\n";
-		echo "<textarea cols=121 rows=15 name=\"new_content\">";
-		echo htmlspecialchars(br2nl($cont[1], ENT_NOQUOTES));
-		echo "</textarea><br />\n";
-		echo "<input type=\"hidden\" name=\"sid\" value=\"".session_id()."\">\n";
-		echo "<input type=\"hidden\" name=\"title\" value=\"".htmlspecialchars($_REQUEST['title'])."\">\n";
-		echo "<input type=\"hidden\" name=\"edit_content\">\n";
-		echo "<input type=\"submit\" value=\"Edit\">";
-*/
-
-if (isset($out_write)) {
-	echo $out_write;
-}
-
-if (isset($out_edit)) {
-	echo $out_edit;
-}
 ?>
