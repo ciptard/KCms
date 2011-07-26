@@ -158,8 +158,12 @@ class KCms {
 		
 		$active = file("plugins/active.txt");
 		foreach ($active as $plugin) {
-			$new_data = $html;
+			if (!isset($new_data)) {
+				$new_data = $html;
+			}
+			
 			$plugin = str_replace("\n", "", $plugin);
+			
 			if (!file_exists("plugins/".$plugin)) {
 				die("Plugin: ".$plugin." doesn't exist");
 			}
@@ -171,7 +175,7 @@ class KCms {
 			require("plugins/{$plugin}");
 			$func = array();
 			$funcs = array(); // maybe, in future, it will have an explaination D:
-			preg_match("/([a-zA-Z0-9]*)\.php/", $plugin, $func);
+			preg_match("/(.+?)\.php/", $plugin, $func);
 			array_push($funcs, $func[1]);
 			$class = new $func[1];
 			$n += 1;
